@@ -20,6 +20,7 @@
         {% endif %}
         {% if session.get('user_role') == 'agent' %}
             <a href="{{ url_for('agent.dashboard') }}">Flights Sold</a>
+            <a href="{{ url_for('agent.analytics') }}">Analytics</a>
         {% endif %}
         <a href="{{ url_for('auth.logout') }}">Logout</a>
     {% else %}

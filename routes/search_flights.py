@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, request, render_template, redirect, url_for
+from flask import Blueprint, flash, request, render_template, redirect, url_for, session
 from db import get_connection
 
 search_flights_bp = Blueprint("search_flights", __name__, url_prefix="/search_flights")
@@ -42,9 +42,25 @@ def search_flights():
         FROM Flight AS f
         JOIN Airport AS a1 ON f.departure_airport = a1.airport_name
         JOIN Airport AS a2 ON f.arrival_airport   = a2.airport_name
-        WHERE DATE(f.departure_time) = %s
     """
-    params = [date]
+    params = []
+    
+    if session.get("user_role") == "agent":
+        # if agent, limit airlines
+        sql += """
+            JOIN agent_airline_authorization AS auth
+                ON auth.airline_name = f.airline_name
+            WHERE auth.agent_email = %s
+                AND DATE(f.departure_time) = %s
+        """
+        params.extend([session["user_email"], date])
+
+    else:
+        # customer or public user
+        sql += """
+            WHERE DATE(f.departure_time) = %s
+        """
+        params.append(date)
     
     if origin != "":
         sql += " AND (a1.airport_city LIKE %s OR a1.airport_name LIKE %s)"

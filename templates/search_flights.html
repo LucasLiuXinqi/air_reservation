@@ -27,28 +27,54 @@
     <td>
       {% if session.get('user_role') == 'customer' %}
       <form method="post" action="{{ url_for('customer.purchase') }}">
-        <!-- type="hidden": send info but user cant see-->
+        <!-- send flight info -->
         <input type="hidden" name="airline_name" value="{{ f.airline_name }}">
         <input type="hidden" name="flight_num" value="{{ f.flight_num }}">
         <input type="hidden" name="airplane_id" value="{{ f.airplane_id }}">
+
         <!-- keep the search filters -->
         <input type="hidden" name="origin" value="{{ origin }}">
         <input type="hidden" name="destination" value="{{ destination }}">
         <input type="hidden" name="date" value="{{ date }}">
+
         <label>Class:</label>
         <select name="seat_class_id">
           <option value="1">Economy</option>
           <option value="2">Business</option>
           <option value="3">First</option>
         </select>
+
         <button type="submit">Purchase</button>
-        <!-- will send airline_name, flight_num, airplane_id, seat_class_id after submission -->
+        <!-- will send airline_name, flight_num, airplane_id, seat_class_id -->
       </form>
-      {% elif session.get('user_role') == 'agent' and is_agent %}
+
+      {% elif session.get('user_role') == 'agent' %}
       <form method="post" action="{{ url_for('agent.purchase') }}">
-        <input type="email" name="customer_email" placeholder="customer email" required>
+        <!-- flight info -->
+        <input type="hidden" name="airline_name" value="{{ f.airline_name }}">
+        <input type="hidden" name="flight_num" value="{{ f.flight_num }}">
+        <input type="hidden" name="airplane_id" value="{{ f.airplane_id }}">
+
+        <!-- keep the search filters -->
+        <input type="hidden" name="origin" value="{{ origin }}">
+        <input type="hidden" name="destination" value="{{ destination }}">
+        <input type="hidden" name="date" value="{{ date }}">
+
+        <!-- extra info only agent needs -->
+        <input type="email" name="customer_email" placeholder="Customer email" required>
+
+        <label>Class:</label>
+        <select name="seat_class_id">
+          <option value="1">Economy</option>
+          <option value="2">Business</option>
+          <option value="3">First</option>
+        </select>
+
+        <button type="submit">Purchase for customer</button>
+      </form>
+
       {% else %}
-        <span>Login as customer to purchase</span>
+        <span>Login as customer or agent to purchase</span>
       {% endif %}
     </td>
   </tr>
