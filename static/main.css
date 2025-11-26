@@ -1,4 +1,4 @@
-body {
+/* body {
     font-family: sans-serif;
     margin: 20px;
 }
@@ -11,4 +11,94 @@ nav a {
     color: red;
     list-style: none;
     padding: 0;
+} */
+
+/* 2025/11/25 居中*/
+
+/* main.css — 让主要文字居中显示 */
+
+body {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    background: #f7f8fa;
+    color: #222;
+    text-align: center;       /* 全局文字居中 */
+}
+
+/* 容器：给页面内容一个固定宽度并水平居中（便于阅读） */
+.container {
+    width: 92%;
+    max-width: 900px;
+    margin: 30px auto;        /* 自动左右居中 */
+    text-align: center;       /* 确保容器内文本居中 */
+}
+
+/* 导航栏（水平排列但文字居中） */
+.navbar {
+    background: #ffffff;
+    padding: 12px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: center;  /* 导航项整体居中 */
+    gap: 24px;                /* 导航项间距 */
+    align-items: center;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2a72e5;
+    text-decoration: none;
+}
+
+/* 导航链接 */
+.nav-links a {
+    color: #444;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* 悬停样式 */
+.nav-links a:hover {
+    color: #2a72e5;
+}
+
+/* 登出按钮样式（微突出） */
+.btn-logout {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #2a72e5;
+    color: #2a72e5;
+    text-decoration: none;
+}
+
+/* Flash 提示 */
+.flash {
+    margin: 18px 0;
+    padding: 0;
+    list-style: none;
+    display: inline-block;    /* 让 flash 的宽度随内容而定，并居中 */
+    text-align: left;         /* flash 内部文字左对齐，通常更易读 */
+}
+
+.flash-item {
+    background: #fff3f3;
+    border-left: 4px solid #ff5b5b;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    color: #8a1f1f;
+}
+
+/* 小屏幕优化：让 navbar 垂直堆叠 */
+@media (max-width: 600px) {
+    .navbar {
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px;
+    }
+    .container {
+        width: 96%;
+        margin: 16px auto;
+    }
 }
