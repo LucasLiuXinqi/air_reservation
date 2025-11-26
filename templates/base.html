@@ -3,43 +3,55 @@
 <head>
     <meta charset="utf-8">
     <title>Air Ticket Reservation System</title>
-    <!-- import the CSS file -->
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
 </head>
 <body>
-<nav>
 
+<nav class="navbar">
     {% if session.get('user_role') %}
-        <!-- <span> Hello {{ session.get('user_name') }} </span> -->
         {% if session.get('user_role') == 'customer' %}
-            <a href="{{ url_for('customer.index') }}">Book Flights</a>
-            <a href="{{ url_for('customer.dashboard') }}">My Flights</a>
-            <a href="{{ url_for('customer.spending') }}">My Spending</a>
-            <a href="{{ url_for('customer.profile') }}">My Profile</a>
-        {% endif %}
-        {% if session.get('user_role') == 'agent' %}
-            <a href="{{ url_for('customer.index') }}">Book Flights</a>
-            <a href="{{ url_for('agent.dashboard') }}">Flights Sold</a>
-            <a href="{{ url_for('agent.analytics') }}">Analytics</a>
-        {% endif %}
-        <a href="{{ url_for('auth.logout') }}">Logout</a>
-        {% if session.get('user_role') == 'admin' or session.get('user_role') == 'operator' %}
-            <a href="{{ url_for('staff.dashboard') }}">Staff Dashboard</a>
-            <a href="{{ url_for('staff.passengers') }}">Passenger List</a>
-            <a href="{{ url_for('staff.customer_flights') }}">Customer Flights</a>
-            <a href="{{ url_for('staff.analytics') }}">Analytics</a>
-            {% if session.get('user_role') == 'admin' %}
-                <a href="{{ url_for('staff.admin_home') }}">Admin</a>
-            {% endif %}
-            {% if session.get('user_role') == 'operator' %}
-                <a href="{{ url_for('staff.operator_home') }}">Operator</a>
-            {% endif %}
+            <div class="nav-center">
+                <a href="{{ url_for('customer.index') }}">Book Flights</a>
+                <a href="{{ url_for('customer.dashboard') }}">My Flights</a>
+                <a href="{{ url_for('customer.spending') }}">My Spending</a>
+            </div>
+            <div class="nav-right">
+                <a href="{{ url_for('customer.profile') }}">My Profile</a>
+                <a href="{{ url_for('auth.logout') }}">Logout</a>
+            </div>
+        {% elif session.get('user_role') == 'agent' %}
+            <div class="nav-center">
+                <a href="{{ url_for('customer.index') }}">Book Flights</a>
+                <a href="{{ url_for('agent.dashboard') }}">Flights Sold</a>
+                <a href="{{ url_for('agent.analytics') }}">Analytics</a>
+            </div>
+            <div class="nav-right">
+                <a href="{{ url_for('auth.logout') }}">Logout</a>
+            </div>
+        {% elif session.get('user_role') == 'admin' or session.get('user_role') == 'operator' %}
+            <div class="nav-center">
+                <a href="{{ url_for('staff.dashboard') }}">Staff Dashboard</a>
+                <a href="{{ url_for('staff.passengers') }}">Passenger List</a>
+                <a href="{{ url_for('staff.customer_flights') }}">Customer Flights</a>
+                <a href="{{ url_for('staff.analytics') }}">Analytics</a>
+            </div>
+            <div class="nav-right">
+                {% if session.get('user_role') == 'admin' %}
+                    <a href="{{ url_for('staff.admin_home') }}">Admin</a>
+                {% endif %}
+                {% if session.get('user_role') == 'operator' %}
+                    <a href="{{ url_for('staff.operator_home') }}">Operator</a>
+                {% endif %}
+                <a href="{{ url_for('auth.logout') }}">Logout</a>
+            </div>
         {% endif %}
     {% else %}
-        <a href="{{ url_for('auth.login') }}">Login</a>
-        <a href="{{ url_for('auth.register') }}">Register</a>
+        <div class="nav-right">
+            <a href="{{ url_for('customer.index') }}">Home</a>
+            <a href="{{ url_for('auth.login') }}">Login</a>
+            <a href="{{ url_for('auth.register') }}">Register</a>
+        </div>
     {% endif %}
-
 </nav>
 
 {% with messages = get_flashed_messages() %}
@@ -55,5 +67,6 @@
 <hr>
 
 {% block content %}{% endblock %}
+
 </body>
 </html>

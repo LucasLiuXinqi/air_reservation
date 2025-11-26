@@ -16,54 +16,60 @@ nav a {
 /* 2025/11/25 居中*/
 
 /* main.css — 让主要文字居中显示 */
-
 body {
     font-family: "Helvetica Neue", Arial, sans-serif;
     margin: 0;
     background: #f7f8fa;
     color: #222;
-    text-align: center;       /* 全局文字居中 */
+    text-align: center;
 }
 
-/* 容器：给页面内容一个固定宽度并水平居中（便于阅读） */
 .container {
     width: 92%;
     max-width: 900px;
-    margin: 30px auto;        /* 自动左右居中 */
-    text-align: center;       /* 确保容器内文本居中 */
+    margin: 30px auto;
+    text-align: center;
 }
 
-/* 导航栏（水平排列但文字居中） */
 .navbar {
-    background: #ffffff;
-    padding: 12px 20px;
-    border-bottom: 1px solid #eee;
     display: flex;
-    justify-content: center;  /* 导航项整体居中 */
-    gap: 24px;                /* 导航项间距 */
     align-items: center;
+    padding: 12px 20px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    position: relative;
 }
 
-.logo {
-    font-size: 20px;
-    font-weight: 700;
-    color: #2a72e5;
-    text-decoration: none;
+/* 中间菜单绝对居中 */
+.nav-center {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* 右侧菜单靠右 */
+.nav-right {
+    display: flex;
+    gap: 16px;
+    margin-left: auto;
 }
 
 /* 导航链接 */
-.nav-links a {
+.nav-center a,
+.nav-right a {
     color: #444;
     text-decoration: none;
     font-weight: 500;
 }
 
-/* 悬停样式 */
-.nav-links a:hover {
+.nav-center a:hover,
+.nav-right a:hover {
     color: #2a72e5;
 }
 
-/* 登出按钮样式（微突出） */
 .btn-logout {
     padding: 6px 12px;
     border-radius: 6px;
@@ -77,8 +83,8 @@ body {
     margin: 18px 0;
     padding: 0;
     list-style: none;
-    display: inline-block;    /* 让 flash 的宽度随内容而定，并居中 */
-    text-align: left;         /* flash 内部文字左对齐，通常更易读 */
+    display: inline-block;
+    text-align: left;
 }
 
 .flash-item {
@@ -90,12 +96,17 @@ body {
     color: #8a1f1f;
 }
 
-/* 小屏幕优化：让 navbar 垂直堆叠 */
+/* 小屏幕优化 */
 @media (max-width: 600px) {
     .navbar {
         flex-direction: column;
         gap: 8px;
         padding: 10px;
+        position: static;
+    }
+    .nav-center {
+        position: static;
+        transform: none;
     }
     .container {
         width: 96%;
