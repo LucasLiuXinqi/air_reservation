@@ -14,6 +14,7 @@ nav a {
 } */
 
 /* 2025/11/25 居中*/
+/* 2025/11/26 导航中 login out 最右边*/
 
 /* main.css — 让主要文字居中显示 */
 body {
@@ -112,4 +113,36 @@ body {
         width: 96%;
         margin: 16px auto;
     }
+}
+
+/* analytics chart居中 */
+canvas {
+    display: block;
+    margin: 0 auto;
+    width: 100% !important;   /* 图表变大 */
+    max-width: 900px;         /* 和 .container 对齐 */
+}
+
+
+/* 订票 撑满 左右留白*/
+.book-table {
+    width: 100%;
+    max-width: 95%;          /* 表格占 95% 屏幕宽度 → 自动左右留白 */
+    border-collapse: collapse;
+    margin: 20px auto;
+}
+
+.book-table th,
+.book-table td {
+    padding: 10px;
+    text-align: center;
+}
+
+.book-table th {
+    background: #2a72e5;
+    color: white;
+}
+
+.book-table tr:nth-child(odd) {
+    background: #84b8ea;
 }
