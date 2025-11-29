@@ -183,17 +183,23 @@
 
 <h3>Existing Airplanes for {{ airline_name }}</h3>
 {% if airplanes %}
-<table class="book-table" border="1">
-    <tr><th>ID</th>{% if seat_col_present %}<th>Seat Capacity</th>{% endif %}</tr>
-    {% for p in airplanes %}
-    <tr>
-        <td>{{ p.airplane_id }}</td>
-        {% if seat_col_present %}<td>{{ p.seat_capacity }}</td>{% endif %}
-    </tr>
-    {% endfor %}
-</table>
+<div style="max-width: 450px; margin: 0 auto;">  <!-- 限制宽度并居中 -->
+    <table class="book-table" border="1" style="width: 100%;">
+        <tr>
+            <th>ID</th>
+            {% if seat_col_present %}<th>Seat Capacity</th>{% endif %}
+        </tr>
+        {% for p in airplanes %}
+        <tr>
+            <td>{{ p.airplane_id }}</td>
+            {% if seat_col_present %}<td>{{ p.seat_capacity }}</td>{% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
 {% else %}
 <p>No airplanes for this airline yet.</p>
 {% endif %}
+
 
 {% endblock %}
