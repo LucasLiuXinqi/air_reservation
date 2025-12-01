@@ -6,7 +6,7 @@
 <hr>
 <h3>Top Booking Agents (Last Month)</h3>
 {% if top_agents_month %}
-<table border="1">
+<table class="book-table" border="1">
     <tr>
         <th>Agent</th>
         <th>Tickets Sold</th>
@@ -27,7 +27,7 @@
 <hr>
 <h3>Top Booking Agents (Last Year)</h3>
 {% if top_agents_year %}
-<table border="1">
+<table class="book-table" border="1">
     <tr>
         <th>Agent</th>
         <th>Tickets Sold</th>
@@ -55,7 +55,7 @@
 
 <hr>
 <h3>Tickets Sold Per Month (Last 12 Months)</h3>
-<table border="1">
+<table class="book-table" border="1">
     <tr><th>Month</th><th>Tickets</th></tr>
     {% for m in tickets_per_month %}
     <tr><td>{{ m.month }}</td><td>{{ m.tickets_sold }}</td></tr>
@@ -63,16 +63,34 @@
 </table>
 
 <hr>
-<h3>Delay vs. On-time</h3>
+<!-- <h3>Delay vs. On-time</h3>
 <ul>
     <li>Delayed: {{ delay_stats.delayed_count }}</li>
     <li>On-time: {{ delay_stats.ontime_count }}</li>
     <li>Other: {{ delay_stats.other_count }}</li>
-</ul>
+</ul> -->
+
+<h3>Delay vs. On-time</h3>
+<div class="delay-cards">
+    <div class="card">
+        <p class="label">Delayed</p>
+        <p class="value">{{ delay_stats.delayed_count }}</p>
+    </div>
+    <div class="card">
+        <p class="label">On-time</p>
+        <p class="value">{{ delay_stats.ontime_count }}</p>
+    </div>
+    <div class="card">
+        <p class="label">Other</p>
+        <p class="value">{{ delay_stats.other_count }}</p>
+    </div>
+</div>
+
+
 
 <hr>
 <h3>Top Destinations (Last 3 Months)</h3>
-<table border="1">
+<table class="book-table" border="1">
     <tr><th>City</th><th>Flights</th></tr>
     {% for d in top_dest_3m %}
     <tr><td>{{ d.city }}</td><td>{{ d.flights }}</td></tr>
@@ -80,7 +98,7 @@
 </table>
 
 <h3>Top Destinations (Last Year)</h3>
-<table border="1">
+<table class="book-table" border="1">
     <tr><th>City</th><th>Flights</th></tr>
     {% for d in top_dest_1y %}
     <tr><td>{{ d.city }}</td><td>{{ d.flights }}</td></tr>

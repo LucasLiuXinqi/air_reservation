@@ -8,7 +8,7 @@
 
 <hr>
 
-<h3>Filter Flights</h3>
+<!-- <h3>Filter Flights</h3>
 <form method="get" action="{{ url_for('staff.dashboard') }}">
     <label>Departure date from:</label>
     <input type="date" name="date_from" value="{{ date_from }}">
@@ -22,13 +22,41 @@
     <input type="text" name="destination" value="{{ destination }}"><br><br>
 
     <button type="submit">Apply Filters</button>
+</form> -->
+
+<h3>Filter Flights</h3>
+
+<form class="filter-bar" method="get" action="{{ url_for('staff.dashboard') }}">
+
+    <div class="filter-group">
+        <label>Origin</label>
+        <input type="text" name="origin" placeholder="e.g. JFK" value="{{ origin }}">
+    </div>
+
+    <div class="filter-group">
+        <label>Destination</label>
+        <input type="text" name="destination" placeholder="e.g. PVG" value="{{ destination }}">
+    </div>
+    
+    <div class="filter-group">
+        <label>Departure from</label>
+        <input type="date" name="date_from" value="{{ date_from }}">
+    </div>
+
+    <div class="filter-group">
+        <label>to</label>
+        <input type="date" name="date_to" value="{{ date_to }}">
+    </div>
+
+    <button class="filter-btn" type="submit">Apply</button>
 </form>
+
 
 <hr>
 
 <h3>Flights</h3>
 {% if flights and flights|length > 0 %}
-<table border="1">
+<table class="book-table" border="1">
     <tr>
         <th>Flight #</th>
         <th>From</th>

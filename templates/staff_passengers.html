@@ -8,15 +8,21 @@
 
 <hr>
 
-<form method="get" action="{{ url_for('staff.passengers') }}">
-    <label>Flight #:</label>
-    <input type="text" name="flight_num" value="{{ flight_num }}" required>
+<form method="get" action="{{ url_for('staff.passengers') }}" class="air-filter-bar">
 
-    <label>Departure date (optional):</label>
-    <input type="date" name="date" value="{{ date }}">
+    <div class="air-filter-item">
+        <label>Flight #:</label>
+        <input type="text" name="flight_num" value="{{ flight_num }}" required>
+    </div>
 
-    <button type="submit">Show Passengers</button>
+    <div class="air-filter-item">
+        <label>Departure date (optional):</label>
+        <input type="date" name="date" value="{{ date }}">
+    </div>
+
+    <button type="submit" class="air-btn-search">Show Passengers</button>
 </form>
+
 
 <hr>
 
@@ -24,7 +30,7 @@
     {% if passengers and passengers|length > 0 %}
         <h3>Passengers for flight {{ flight_num }} {% if date %}on {{ date }}{% endif %}</h3>
 
-        <table border="1">
+        <table class="book-table" border="1">
             <tr>
                 <th>Customer Email</th>
                 <th>Customer Name</th>

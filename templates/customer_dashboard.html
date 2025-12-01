@@ -4,31 +4,43 @@
 <h2>My Flights</h2>
 <p>Welcome, {{ session['user_name'] }}!</p>
 
-<form method="get" action="{{ url_for('customer.dashboard') }}">
+<form method="get" action="{{ url_for('customer.dashboard') }}" class="filters-form">
     <fieldset>
-        <legend>Filters</legend>
 
-        <label>From date:</label>
-        <input type="date" name="date_from" value="{{ date_from }}"><br>
+        <div class="filters-group">
+            <div>
+                <label>From date:</label>
+                <input type="date" name="date_from" value="{{ date_from }}">
+            </div>
 
-        <label>To date:</label>
-        <input type="date" name="date_to" value="{{ date_to }}"><br>
+            <div>
+                <label>To date:</label>
+                <input type="date" name="date_to" value="{{ date_to }}">
+            </div>
 
-        <label>Origin (city or airport):</label>
-        <input type="text" name="origin" value="{{ origin }}"><br>
+            <div>
+                <label>Origin (city or airport):</label>
+                <input type="text" name="origin" value="{{ origin }}">
+            </div>
 
-        <label>Destination (city or airport):</label>
-        <input type="text" name="dest" value="{{ dest }}"><br>
+            <div>
+                <label>Destination (city or airport):</label>
+                <input type="text" name="dest" value="{{ dest }}">
+            </div>
+        </div>
 
-        <label>
-            <input type="checkbox" name="show_all" value="1"
-                   {% if show_all == '1' %}checked{% endif %}>
-            Show past flights as well
-        </label><br><br>
+        <div class="filters-group">
+            <label>
+                <input type="checkbox" name="show_all" value="1"
+                       {% if show_all == '1' %}checked{% endif %}>
+                Show past flights as well
+            </label>
+        </div>
 
         <button type="submit">Apply Filters</button>
     </fieldset>
 </form>
+
 
 <hr>
 

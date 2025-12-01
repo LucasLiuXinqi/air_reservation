@@ -6,27 +6,45 @@
 <hr>
 
 <h3>Summary (Last 30 Days)</h3>
-<ul>
-  <li><strong>Total commission:</strong> {{ stats_30.total_commission or 0 }}</li>
-  <li><strong>Tickets sold:</strong> {{ stats_30.tickets_sold or 0 }}</li>
-  <li><strong>Average commission per ticket:</strong> {{ stats_30.avg_commission or 0 }}</li>
-</ul>
+
+<div class="delay-cards">
+    <div class="card">
+        <div class="label">Total commission</div>
+        <div class="value">{{ stats_30.total_commission or 0 }}</div>
+    </div>
+
+    <div class="card">
+        <div class="label">Tickets sold</div>
+        <div class="value">{{ stats_30.tickets_sold or 0 }}</div>
+    </div>
+
+    <div class="card">
+        <div class="label">Avg commission / ticket</div>
+        <div class="value">{{ stats_30.avg_commission or 0 }}</div>
+    </div>
+</div>
 
 <hr>
 
+
 <h3>Top 5 Customers by Number of Tickets (Last 6 Months)</h3>
 {% if top_customers_6_months and top_customers_6_months|length > 0 %}
-  <canvas id="ticketsChart" style="max-width: 700px;"></canvas>
+  <div class="chart-card">
+      <canvas id="ticketsChart"></canvas>
+  </div>
 {% else %}
   <p>No data for the last 6 months.</p>
 {% endif %}
 
 <h3>Top 5 Customers by Commission (Last Year)</h3>
 {% if top_customers_1_year and top_customers_1_year|length > 0 %}
-  <canvas id="commissionChart" style="max-width: 700px;"></canvas>
+  <div class="chart-card">
+      <canvas id="commissionChart"></canvas>
+  </div>
 {% else %}
   <p>No data for the last year.</p>
 {% endif %}
+
 
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

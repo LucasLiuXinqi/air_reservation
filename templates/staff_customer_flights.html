@@ -7,24 +7,33 @@
 
 <hr>
 
-<form method="get" action="{{ url_for('staff.customer_flights') }}">
-    <label>Customer Email:</label>
-    <input type="email" name="customer_email" value="{{ customer_email }}" required><br><br>
+<form method="get" action="{{ url_for('staff.customer_flights') }}" class="air-filter-bar">
 
-    <label>Purchase date from (optional):</label>
-    <input type="date" name="date_from" value="{{ date_from }}">
-    <label>to:</label>
-    <input type="date" name="date_to" value="{{ date_to }}"><br><br>
+    <div class="air-filter-item">
+        <label>Customer Email:</label>
+        <input type="email" name="customer_email" value="{{ customer_email }}" required>
+    </div>
 
-    <button type="submit">Show Flights</button>
+    <div class="air-filter-item">
+        <label>Purchase date from (optional):</label>
+        <input type="date" name="date_from" value="{{ date_from }}">
+    </div>
+
+    <div class="air-filter-item">
+        <label>to:</label>
+        <input type="date" name="date_to" value="{{ date_to }}">
+    </div>
+
+    <button type="submit" class="air-btn-search">Show Flights</button>
 </form>
+
 
 <hr>
 
 {% if customer_email %}
     {% if flights and flights|length > 0 %}
         <h3>Flights for {{ customer_email }}</h3>
-        <table border="1">
+        <table class='book-table' border="1">
             <tr>
                 <th>Flight #</th>
                 <th>From</th>

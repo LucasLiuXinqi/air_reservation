@@ -46,8 +46,11 @@
             </div>
         {% endif %}
     {% else %}
-        <div class="nav-right">
+        <div class="nav-left">
             <a href="{{ url_for('customer.index') }}">Home</a>
+        </div>
+
+        <div class="nav-right">
             <a href="{{ url_for('auth.login') }}">Login</a>
             <a href="{{ url_for('auth.register') }}">Register</a>
         </div>

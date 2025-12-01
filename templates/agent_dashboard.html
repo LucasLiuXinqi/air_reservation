@@ -4,24 +4,37 @@
 <h2>Flights Sold (as Booking Agent)</h2>
 <p>Logged in as: {{ session['user_email'] }}</p>
 
-<form method="get" action="{{ url_for('agent.dashboard') }}">
-    <fieldset>
-        <legend>Filters</legend>
+<form method="get" action="{{ url_for('agent.dashboard') }}" class="air-filter-bar">
 
-        <label>Purchase date from:</label>
-        <input type="date" name="date_from" value="{{ date_from }}">
-        <label>to:</label>
-        <input type="date" name="date_to" value="{{ date_to }}"><br><br>
+    <div style="display:flex; flex-wrap:wrap; gap:15px; width:100%;">
+        <div class="air-filter-item" style="flex:1; min-width:180px;">
+            <label>Purchase date from:</label>
+            <input type="date" name="date_from" value="{{ date_from }}">
+        </div>
 
-        <label>Origin (city or airport):</label>
-        <input type="text" name="origin" value="{{ origin }}">
+        <div class="air-filter-item" style="flex:1; min-width:180px;">
+            <label>to:</label>
+            <input type="date" name="date_to" value="{{ date_to }}">
+        </div>
 
-        <label>Destination (city or airport):</label>
-        <input type="text" name="dest" value="{{ dest }}"><br><br>
+        <div class="air-filter-item" style="flex:1; min-width:180px;">
+            <label>Origin (city or airport):</label>
+            <input type="text" name="origin" value="{{ origin }}">
+        </div>
 
-        <button type="submit">Apply Filters</button>
-    </fieldset>
+        <div class="air-filter-item" style="flex:1; min-width:180px;">
+            <label>Destination (city or airport):</label>
+            <input type="text" name="dest" value="{{ dest }}">
+        </div>
+
+        <div style="flex:1; min-width:180px; align-self:flex-end;">
+            <button type="submit" class="air-btn-search">Apply Filters</button>
+        </div>
+    </div>
+
 </form>
+
+
 
 <hr>
 

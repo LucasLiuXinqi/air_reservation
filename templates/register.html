@@ -1,21 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Registration</h2>
+<h2 class="login-title">Registration</h2>
 
-<form method="post" action="{{ url_for('auth.register') }}">
-    <label>Name:</label><br>
-    <input type="text" name="name" required><br><br>
+<form class="login-form" method="post" action="{{ url_for('auth.register') }}">
 
-    <label>Email:</label><br>
-    <input type="email" name="email" required><br><br>
+    <div class="login-group">
+        <label>Name</label>
+        <input type="text" name="name" placeholder="Your full name" required>
+    </div>
 
-    <label>Password:</label><br>
-    <input type="password" name="password" required><br><br>
+    <div class="login-group">
+        <label>Email</label>
+        <input type="email" name="email" placeholder="example@mail.com" required>
+    </div>
 
-    <label>Confirm Password:</label><br>
-    <input type="password" name="confirm" required><br><br>
+    <div class="login-group">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Create password" required>
+    </div>
 
-    <button type="submit">Register</button>
+    <div class="login-group">
+        <label>Confirm Password</label>
+        <input type="password" name="confirm" placeholder="Retype password" required>
+    </div>
+
+    <button type="submit" class="login-btn">Register</button>
 </form>
 {% endblock %}

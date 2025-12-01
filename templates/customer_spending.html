@@ -8,24 +8,37 @@
 <h3>Default View (Last 12 Months)</h3>
 <p><strong>Total spending in last 12 months:</strong> {{ total_12 }}</p>
 
-<canvas id="last6Chart" width="400" height="200"></canvas>
+<div class="chart-card">
+    <canvas id="last6Chart" width="400" height="200"></canvas>
+</div>
+
 
 <hr>
 
 <h3>Custom Date Range</h3>
-<form method="get" action="{{ url_for('customer.spending') }}">
-    <label>From:</label>
-    <input type="date" name="date_from" value="{{ date_from }}">
-    <label>To:</label>
-    <input type="date" name="date_to" value="{{ date_to }}">
-    <button type="submit">Show Spending</button>
+
+<!-- 这里把表单包装成一个 filter-bar 风格 -->
+<form method="get" action="{{ url_for('customer.spending') }}" class="chart-filter-bar">
+    <div class="filter-item">
+        <label>From:</label>
+        <input type="date" name="date_from" value="{{ date_from }}">
+    </div>
+    <div class="filter-item">
+        <label>To:</label>
+        <input type="date" name="date_to" value="{{ date_to }}">
+    </div>
+    <button type="submit" class="filter-btn">Show Spending</button>
 </form>
 
 {% if date_from and date_to %}
     <h4>Custom Range: {{ date_from }} to {{ date_to }}</h4>
     <p><strong>Total spending in this range:</strong> {{ custom_total }}</p>
-    <canvas id="customChart" width="400" height="200"></canvas>
+    <div class="chart-card">
+        <canvas id="customChart" width="400" height="200"></canvas>
+    </div>
 {% endif %}
+
+
 
 <!-- Include Chart.js from CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

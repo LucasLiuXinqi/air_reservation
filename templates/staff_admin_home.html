@@ -12,48 +12,73 @@
 <hr>
 
 <h3>Add New Airport</h3>
-<form method="post" action="{{ url_for('staff.admin_home') }}">
+<form method="post" action="{{ url_for('staff.admin_home') }}" class="air-filter-bar">
     <input type="hidden" name="form_type" value="airport">
 
-    <label>Airport Name:</label>
-    <input type="text" name="airport_name" required>
+    <div class="air-filter-item">
+        <label>Airport Name:</label>
+        <input type="text" name="airport_name" required>
+    </div>
 
-    <label>City:</label>
-    <input type="text" name="airport_city" required>
+    <div class="air-filter-item">
+        <label>City:</label>
+        <input type="text" name="airport_city" required>
+    </div>
 
-    <button type="submit">Add Airport</button>
+    <button type="submit" class="air-btn-search">Add Airport</button>
 </form>
 
 <hr>
 
 <h3>Add New Airplane (for {{ airline_name }})</h3>
-<form method="post" action="{{ url_for('staff.admin_home') }}">
+
+<form method="post" action="{{ url_for('staff.admin_home') }}" class="air-filter-bar">
     <input type="hidden" name="form_type" value="airplane">
 
-    <label>Airplane ID:</label>
-    <input type="text" name="airplane_id" required>
+    <!-- Airplane ID -->
+    <div class="air-filter-item">
+        <label>Airplane ID:</label>
+        <input type="text" name="airplane_id" required>
+    </div>
 
+    <!-- Seat Capacity -->
     {% if seat_col_present %}
-    <label>Seat Capacity:</label>
-    <input type="number" name="seat_capacity" min="1" required>
-    {% else %}
-    <p><em>Seat capacity column not found in schema; plane will be added without a seat count.</em></p>
+    <div class="air-filter-item">
+        <label>Seat Capacity:</label>
+        <input type="number" name="seat_capacity" min="1" required>
+    </div>
     {% endif %}
 
-    <button type="submit">Add Airplane</button>
+    <!-- Submit button -->
+    <button type="submit" class="air-btn-search">Add Airplane</button>
 </form>
+
+<!-- Schema warning below the form -->
+{% if not seat_col_present %}
+<p class="schema-warning" style="margin-top:10px;">
+    <em>Seat capacity column not found in schema; plane will be added without a seat count.</em>
+</p>
+{% endif %}
+
+
+
 
 <hr>
 
 <h3>Associate Booking Agent with {{ airline_name }}</h3>
-<form method="post" action="{{ url_for('staff.admin_home') }}">
+<form method="post" action="{{ url_for('staff.admin_home') }}" class="air-filter-bar">
     <input type="hidden" name="form_type" value="agent">
 
-    <label>Agent Email:</label>
-    <input type="email" name="agent_email" required>
+    <!-- Agent Email -->
+    <div class="air-filter-item">
+        <label>Agent Email:</label>
+        <input type="email" name="agent_email" required>
+    </div>
 
-    <button type="submit">Associate Agent</button>
+    <!-- Submit button -->
+    <button type="submit" class="air-btn-search">Associate Agent</button>
 </form>
+
 
 {% if agents and agents|length > 0 %}
     <p>Currently associated agents:</p>
@@ -67,70 +92,114 @@
 <hr>
 
 <h3>Create New Flight</h3>
-<form method="post" action="{{ url_for('staff.admin_home') }}">
+<form method="post" action="{{ url_for('staff.admin_home') }}" class="air-filter-bar">
     <input type="hidden" name="form_type" value="flight">
 
-    <label>Flight #:</label>
-    <input type="text" name="flight_num" required><br><br>
+    <div style="display:flex; gap:30px; flex-wrap:wrap; width:100%;">
+        <!-- 左边 -->
+        <div style="flex:1; display:flex; flex-direction:column; gap:10px;">
+            <div class="air-filter-item">
+                <label>Flight #:</label>
+                <input type="text" name="flight_num" required>
+            </div>
 
-    <label>Departure Airport:</label>
-    <select name="departure_airport" required>
-        {% for a in airports %}
-        <option value="{{ a.airport_name }}">{{ a.airport_name }} ({{ a.airport_city }})</option>
-        {% endfor %}
-    </select><br><br>
+            <div style="display:flex; gap:10px;">
+                <div class="air-filter-item" style="flex:1;">
+                    <label>Departure Airport:</label>
+                    <select name="departure_airport" required>
+                        {% for a in airports %}
+                        <option value="{{ a.airport_name }}">{{ a.airport_name }} ({{ a.airport_city }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-    <label>Arrival Airport:</label>
-    <select name="arrival_airport" required>
-        {% for a in airports %}
-        <option value="{{ a.airport_name }}">{{ a.airport_name }} ({{ a.airport_city }})</option>
-        {% endfor %}
-    </select><br><br>
+                <div class="air-filter-item" style="flex:1;">
+                    <label>Arrival Airport:</label>
+                    <select name="arrival_airport" required>
+                        {% for a in airports %}
+                        <option value="{{ a.airport_name }}">{{ a.airport_name }} ({{ a.airport_city }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
 
-    <label>Departure Time:</label>
-    <input type="datetime-local" name="departure_time" required><br><br>
+            <div style="display:flex; gap:10px;">
+                <div class="air-filter-item" style="flex:1;">
+                    <label>Departure Time:</label>
+                    <input type="datetime-local" name="departure_time" required>
+                </div>
 
-    <label>Arrival Time:</label>
-    <input type="datetime-local" name="arrival_time" required><br><br>
+                <div class="air-filter-item" style="flex:1;">
+                    <label>Arrival Time:</label>
+                    <input type="datetime-local" name="arrival_time" required>
+                </div>
+            </div>
+        </div>
 
-    <label>Base Price:</label>
-    <input type="number" name="base_price" min="0" step="1" required><br><br>
+        <!-- 右边 -->
+        <div style="flex:1; display:flex; flex-direction:column; gap:10px;">
+            <div class="air-filter-item">
+                <label>Base Price:</label>
+                <input type="number" name="base_price" min="0" step="1" required>
+            </div>
 
-    <label>Airplane:</label>
-    <select name="airplane_id_for_flight" required>
-        {% for p in airplanes %}
-        <option value="{{ p.airplane_id }}">
-            {{ p.airplane_id }}{% if seat_col_present %} ({{ p.seat_capacity }} seats){% endif %}
-        </option>
-        {% endfor %}
-    </select><br><br>
+            <div class="air-filter-item">
+                <label>Airplane:</label>
+                <select name="airplane_id_for_flight" required>
+                    {% for p in airplanes %}
+                    <option value="{{ p.airplane_id }}">
+                        {{ p.airplane_id }}{% if seat_col_present %} ({{ p.seat_capacity }} seats){% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-    <label>Status:</label>
-    <select name="status">
-        <option value="upcoming">upcoming</option>
-        <option value="on-time">on-time</option>
-        <option value="delayed">delayed</option>
-        <option value="cancelled">cancelled</option>
-    </select><br><br>
+            <div class="air-filter-item">
+                <label>Status:</label>
+                <select name="status">
+                    <option value="upcoming">upcoming</option>
+                    <option value="on-time">on-time</option>
+                    <option value="delayed">delayed</option>
+                    <option value="cancelled">cancelled</option>
+                </select>
+            </div>
 
-    <button type="submit">Create Flight</button>
+            <button type="submit" class="air-btn-search" style="margin-top:10px; width:100%;">Create Flight</button>
+        </div>
+    </div>
 </form>
+
+<style>
+/* 统一 input 和 select 宽度撑满父容器 */
+.air-filter-item input,
+.air-filter-item select {
+    width: 100%;
+    box-sizing: border-box;
+}
+</style>
+
 
 <hr>
 
 <h3>Existing Airplanes for {{ airline_name }}</h3>
 {% if airplanes %}
-<table border="1">
-    <tr><th>ID</th>{% if seat_col_present %}<th>Seat Capacity</th>{% endif %}</tr>
-    {% for p in airplanes %}
-    <tr>
-        <td>{{ p.airplane_id }}</td>
-        {% if seat_col_present %}<td>{{ p.seat_capacity }}</td>{% endif %}
-    </tr>
-    {% endfor %}
-</table>
+<div style="max-width: 450px; margin: 0 auto;">  <!-- 限制宽度并居中 -->
+    <table class="book-table" border="1" style="width: 100%;">
+        <tr>
+            <th>ID</th>
+            {% if seat_col_present %}<th>Seat Capacity</th>{% endif %}
+        </tr>
+        {% for p in airplanes %}
+        <tr>
+            <td>{{ p.airplane_id }}</td>
+            {% if seat_col_present %}<td>{{ p.seat_capacity }}</td>{% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
 {% else %}
 <p>No airplanes for this airline yet.</p>
 {% endif %}
+
 
 {% endblock %}

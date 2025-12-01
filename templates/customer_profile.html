@@ -1,43 +1,61 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>My Profile</h2>
+<h2 class="login-title">My Profile</h2>
 
 <p>Email: <strong>{{ customer.email }}</strong></p>
 
-<form method="post" action="{{ url_for('customer.profile') }}">
-    <label>Name:</label><br>
-    <input type="text" name="name" value="{{ customer.name }}" required><br><br>
+<form method="post" action="{{ url_for('customer.profile') }}" class="login-form">
+    <div class="login-group">
+        <label>Name:</label>
+        <input type="text" name="name" value="{{ customer.name }}" required>
+    </div>
 
-    <label>Building Number:</label><br>
-    <input type="text" name="building_number" value="{{ customer.building_number }}"><br><br>
+    <div class="login-group">
+        <label>Building Number:</label>
+        <input type="text" name="building_number" value="{{ customer.building_number }}">
+    </div>
 
-    <label>Street:</label><br>
-    <input type="text" name="street" value="{{ customer.street }}"><br><br>
+    <div class="login-group">
+        <label>Street:</label>
+        <input type="text" name="street" value="{{ customer.street }}">
+    </div>
 
-    <label>City:</label><br>
-    <input type="text" name="city" value="{{ customer.city }}"><br><br>
+    <div class="login-group">
+        <label>City:</label>
+        <input type="text" name="city" value="{{ customer.city }}">
+    </div>
 
-    <label>State:</label><br>
-    <input type="text" name="state" value="{{ customer.state }}"><br><br>
+    <div class="login-group">
+        <label>State:</label>
+        <input type="text" name="state" value="{{ customer.state }}">
+    </div>
 
-    <label>Phone Number:</label><br>
-    <input type="text" name="phone_number" value="{{ customer.phone_number }}"><br><br>
+    <div class="login-group">
+        <label>Phone Number:</label>
+        <input type="text" name="phone_number" value="{{ customer.phone_number }}">
+    </div>
 
-    <label>Passport Number:</label><br>
-    <input type="text" name="passport_number" value="{{ customer.passport_number }}"><br><br>
+    <div class="login-group">
+        <label>Passport Number:</label>
+        <input type="text" name="passport_number" value="{{ customer.passport_number }}">
+    </div>
 
-    <label>Passport Expiration:</label><br>
-    <input type="date" name="passport_expiration"
-           value="{{ customer.passport_expiration }}"><br><br>
+    <div class="login-group">
+        <label>Passport Expiration:</label>
+        <input type="date" name="passport_expiration" value="{{ customer.passport_expiration }}">
+    </div>
 
-    <label>Passport Country:</label><br>
-    <input type="text" name="passport_country" value="{{ customer.passport_country }}"><br><br>
+    <div class="login-group">
+        <label>Passport Country:</label>
+        <input type="text" name="passport_country" value="{{ customer.passport_country }}">
+    </div>
 
-    <label>Date of Birth:</label><br>
-    <input type="date" name="date_of_birth"
-           value="{{ customer.date_of_birth }}"><br><br>
+    <div class="login-group">
+        <label>Date of Birth:</label>
+        <input type="date" name="date_of_birth" value="{{ customer.date_of_birth }}">
+    </div>
 
-    <button type="submit">Save Changes</button>
+    <button type="submit" class="login-btn">Save Changes</button>
 </form>
 {% endblock %}
