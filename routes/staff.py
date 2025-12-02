@@ -37,9 +37,9 @@ def operator_required(f):
 @staff_bp.route("/dashboard", methods=["GET"])
 @staff_login_required
 def dashboard():
+    # main dashboard: filter flights for this airline
     username = session.get("user_id")
 
-    # ---- read filters from query ----
     date_from = request.args.get("date_from", "").strip()
     date_to   = request.args.get("date_to", "").strip()
     origin    = request.args.get("origin", "").strip()
@@ -69,7 +69,7 @@ def dashboard():
     if last_name and "lastname" not in session:
         session["lastname"] = last_name
 
-    # if no dates provided, default to "today → today + 30 days"
+    # default 30 days
     if not date_from or not date_to:
         today = date.today()
         df = today
@@ -83,7 +83,7 @@ def dashboard():
         if not date_to:
             date_to = date_to_default
 
-    # ---- query flights with filters ----
+    # query flights
     sql = """
         SELECT f.flight_num,
                f.departure_airport, f.arrival_airport,
@@ -108,7 +108,7 @@ def dashboard():
         sql += " AND f.arrival_airport = %s"
         params.append(destination)
 
-    sql += " ORDER BY f.departure_time ASC LIMIT 200;"
+    sql += " ORDER BY f.departure_time;"
 
     cur.execute(sql, tuple(params))
     flights = cur.fetchall()
@@ -132,12 +132,13 @@ def dashboard():
 @staff_bp.route("/passengers", methods=["GET"])
 @staff_login_required
 def passengers():
+    # get passengers for a specific flight
     username = session.get("user_id")
 
     conn = get_connection()
     cur = conn.cursor(dictionary=True)
 
-    # Find staff's airline
+    # find staff airline
     cur.execute(
         "SELECT airline_name FROM airline_staff WHERE username = %s;",
         (username,)
@@ -151,14 +152,13 @@ def passengers():
 
     airline_name = row["airline_name"]
 
-    # Read search inputs
+    # read search inputs
     flight_num = request.args.get("flight_num", "").strip()
     date       = request.args.get("date", "").strip()
 
     passengers = []
 
     if flight_num:
-        # Build query: passengers on that flight (restricted to staff airline)
         sql = """
             SELECT
                 c.email         AS customer_email,
@@ -208,17 +208,13 @@ def passengers():
 @staff_bp.route("/customer_flights", methods=["GET"])
 @staff_login_required
 def customer_flights():
-    """
-    Staff can enter a customer email and see all flights
-    that customer has taken on this staff's airline.
-    Optional date range filters.
-    """
+    # get flights purchased by a specific customer
     username = session.get("user_id")
 
     conn = get_connection()
     cur = conn.cursor(dictionary=True)
 
-    # Find staff airline
+    # find staff airline
     cur.execute(
         "SELECT airline_name FROM airline_staff WHERE username = %s;",
         (username,)
@@ -289,11 +285,12 @@ def customer_flights():
 @staff_bp.route("/analytics")
 @staff_login_required
 def analytics():
+    # airline analytics dashboard
     username = session.get("user_id")
     conn = get_connection()
     cur = conn.cursor(dictionary=True)
 
-    # ----- Find staff airline -----
+    # find staff airline
     cur.execute("SELECT airline_name FROM airline_staff WHERE username = %s;", (username,))
     row = cur.fetchone()
     if not row:
@@ -302,8 +299,7 @@ def analytics():
 
     airline_name = row["airline_name"]
 
-    # =============== 1. TOP BOOKING AGENTS =================
-
+    # top booking agents
     # Last month: by tickets sold
     sql_agent_month = """
         SELECT p.booking_agent_email AS agent,
@@ -338,8 +334,7 @@ def analytics():
     cur.execute(sql_agent_year, (airline_name,))
     top_agents_year = cur.fetchall()
 
-    # =============== 2. MOST FREQUENT CUSTOMER =================
-
+    # most frequent customer
     sql_freq_cust = """
         SELECT p.customer_email AS customer,
                COUNT(*) AS flights_taken
@@ -354,8 +349,7 @@ def analytics():
     cur.execute(sql_freq_cust, (airline_name,))
     frequent_customer = cur.fetchone()
 
-    # =============== 3. TICKETS SOLD PER MONTH =================
-
+    # tickets sold per month
     sql_tickets_per_month = """
         SELECT DATE_FORMAT(p.purchase_date, '%Y-%m') AS month,
                COUNT(*) AS tickets_sold
@@ -369,8 +363,7 @@ def analytics():
     cur.execute(sql_tickets_per_month, (airline_name,))
     tickets_per_month = cur.fetchall()
 
-    # =============== 4. DELAY VS ON-TIME =================
-
+    # flight delay statistics
     sql_delay_stats = """
         SELECT 
             SUM(CASE WHEN f.status = 'delayed' THEN 1 ELSE 0 END) AS delayed_count,
@@ -383,8 +376,7 @@ def analytics():
     cur.execute(sql_delay_stats, (airline_name,))
     delay_stats = cur.fetchone()
 
-    # =============== 5. TOP DESTINATIONS =================
-
+    # top 5 destination cities
     sql_dest_3m = """
         SELECT a.airport_city AS city,
                COUNT(*) AS flights
@@ -432,19 +424,13 @@ def analytics():
 @staff_bp.route("/admin_home", methods=["GET", "POST"])
 @admin_required
 def admin_home():
-    """
-    Admin panel:
-      - Add airports
-      - Add airplanes (for this airline)
-      - Associate booking agents with this airline
-      - Create new flights
-    """
+    # admin panel
     username = session.get("user_id")
 
     conn = get_connection()
     cur = conn.cursor(dictionary=True)
 
-    # Find staff's airline
+    # find staff airline
     cur.execute(
         "SELECT airline_name FROM airline_staff WHERE username = %s;",
         (username,)
