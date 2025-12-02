@@ -353,6 +353,10 @@ canvas {
     font-size: 0.9rem;
 }
 
+.btn-small {
+    font-size: 12px;
+    white-space: nowrap;
+}
 
 /* 手机屏幕友好 */
 @media (max-width: 768px) {
