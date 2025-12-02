@@ -48,7 +48,7 @@
         <td>{{ f.arrival_airport }}</td>
         <td>{{ f.departure_time }}</td>
         <td>{{ f.arrival_time }}</td>
-        <td>{{ f.status }}</td>
+        <td>{{ f.status | display_status }}</td>
         <td>
             <form method="post"
                   action="{{ url_for('staff.operator_home',
@@ -59,9 +59,8 @@
                 <input type="hidden" name="flight_num" value="{{ f.flight_num }}">
                 <select name="status">
                     <option value="upcoming"  {% if f.status == 'upcoming' %}selected{% endif %}>upcoming</option>
-                    <option value="on-time"   {% if f.status == 'on-time' %}selected{% endif %}>on-time</option>
+                    <option value="on-time" {% if f.status in ['in-progress','on-time'] %}selected{% endif %}>on-time</option>
                     <option value="delayed"   {% if f.status == 'delayed' %}selected{% endif %}>delayed</option>
-                    <option value="cancelled" {% if f.status == 'cancelled' %}selected{% endif %}>cancelled</option>
                 </select>
                 <button type="submit">Save</button>
             </form>

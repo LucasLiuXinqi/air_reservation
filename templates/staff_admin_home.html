@@ -35,30 +35,34 @@
 <form method="post" action="{{ url_for('staff.admin_home') }}" class="air-filter-bar">
     <input type="hidden" name="form_type" value="airplane">
 
-    <!-- Airplane ID -->
-    <div class="air-filter-item">
-        <label>Airplane ID:</label>
-        <input type="text" name="airplane_id" required>
-    </div>
+<!-- Airplane ID -->
+<div class="air-filter-item">
+    <label>Airplane ID:</label>
+    <input type="text" name="airplane_id" required>
+</div>
 
-    <!-- Seat Capacity -->
-    {% if seat_col_present %}
-    <div class="air-filter-item">
-        <label>Seat Capacity:</label>
-        <input type="number" name="seat_capacity" min="1" required>
-    </div>
-    {% endif %}
+<!-- Seat Capacities -->
+<div class="air-filter-item">
+    <label>Economy Seats:</label>
+    <input type="number" name="seat_capacity_economy" min="0" step="1" required>
+</div>
+
+<div class="air-filter-item">
+    <label>Business Seats:</label>
+    <input type="number" name="seat_capacity_business" min="0" step="1" required>
+</div>
+
+<div class="air-filter-item">
+    <label>First Class Seats:</label>
+    <input type="number" name="seat_capacity_first" min="0" step="1" required>
+</div>
 
     <!-- Submit button -->
     <button type="submit" class="air-btn-search">Add Airplane</button>
 </form>
 
 <!-- Schema warning below the form -->
-{% if not seat_col_present %}
-<p class="schema-warning" style="margin-top:10px;">
-    <em>Seat capacity column not found in schema; plane will be added without a seat count.</em>
-</p>
-{% endif %}
+{# seat totals are derived from seat_class when no explicit column exists #}
 
 
 
@@ -160,7 +164,6 @@
                     <option value="upcoming">upcoming</option>
                     <option value="on-time">on-time</option>
                     <option value="delayed">delayed</option>
-                    <option value="cancelled">cancelled</option>
                 </select>
             </div>
 
@@ -187,12 +190,12 @@
     <table class="book-table" border="1" style="width: 100%;">
         <tr>
             <th>ID</th>
-            {% if seat_col_present %}<th>Seat Capacity</th>{% endif %}
+            <th>Total Seats{% if not seat_col_present %} (derived){% endif %}</th>
         </tr>
         {% for p in airplanes %}
         <tr>
             <td>{{ p.airplane_id }}</td>
-            {% if seat_col_present %}<td>{{ p.seat_capacity }}</td>{% endif %}
+            <td>{{ p.seat_capacity }}</td>
         </tr>
         {% endfor %}
     </table>

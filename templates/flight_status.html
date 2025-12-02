@@ -15,7 +15,7 @@
         <tr>
             <td>{{ r.airline_name }}</td>
             <td>{{ r.flight_num }}</td>
-            <td>{{ r.status }}</td>
+            <td>{{ r.status | display_status }}</td>
         </tr>
         {% endfor %}
     </table>

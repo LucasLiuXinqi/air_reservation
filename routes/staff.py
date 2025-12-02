@@ -367,7 +367,7 @@ def analytics():
     sql_delay_stats = """
         SELECT 
             SUM(CASE WHEN f.status = 'delayed' THEN 1 ELSE 0 END) AS delayed_count,
-            SUM(CASE WHEN f.status = 'on-time' THEN 1 ELSE 0 END) AS ontime_count,
+            SUM(CASE WHEN f.status = 'in-progress' THEN 1 ELSE 0 END) AS ontime_count,
             SUM(CASE WHEN f.status NOT IN ('delayed','on-time') THEN 1 ELSE 0 END) AS other_count
         FROM flight AS f
         WHERE f.airline_name = %s
@@ -482,25 +482,60 @@ def admin_home():
             # 2) Add airplane
             elif form_type == "airplane":
                 airplane_id   = request.form.get("airplane_id", "").strip()
-                seat_capacity = request.form.get("seat_capacity", "").strip()
+                seat_cap_eco  = request.form.get("seat_capacity_economy", "").strip()
+                seat_cap_bus  = request.form.get("seat_capacity_business", "").strip()
+                seat_cap_fst  = request.form.get("seat_capacity_first", "").strip()
 
-                if not airplane_id or (airplane_seat_col and not seat_capacity):
-                    flash("Airplane ID is required and seat capacity when supported.")
+                if not airplane_id or not (seat_cap_eco and seat_cap_bus and seat_cap_fst):
+                    flash("Airplane ID and all three seat capacities are required.")
                 else:
-                    if airplane_seat_col:
-                        sql = f"""
-                            INSERT INTO airplane (airplane_id, airline_name, {airplane_seat_col})
-                            VALUES (%s, %s, %s);
-                        """
-                        cur.execute(sql, (airplane_id, airline_name, seat_capacity))
+                    try:
+                        cap_eco = int(seat_cap_eco)
+                        cap_bus = int(seat_cap_bus)
+                        cap_fst = int(seat_cap_fst)
+                        total_capacity = cap_eco + cap_bus + cap_fst
+                        if cap_eco < 0 or cap_bus < 0 or cap_fst < 0:
+                            raise ValueError("Capacities must be non-negative.")
+                    except ValueError:
+                        flash("Seat capacities must be non-negative integers.")
                     else:
-                        sql = """
-                            INSERT INTO airplane (airplane_id, airline_name)
-                            VALUES (%s, %s);
-                        """
-                        cur.execute(sql, (airplane_id, airline_name))
-                    conn.commit()
-                    flash(f"Airplane {airplane_id} added for {airline_name}.")
+                        try:
+                            if airplane_seat_col:
+                                sql = f"""
+                                    INSERT INTO airplane (airplane_id, airline_name, {airplane_seat_col})
+                                    VALUES (%s, %s, %s);
+                                """
+                                cur.execute(sql, (airplane_id, airline_name, total_capacity))
+                            else:
+                                sql = """
+                                    INSERT INTO airplane (airplane_id, airline_name)
+                                    VALUES (%s, %s);
+                                """
+                                cur.execute(sql, (airplane_id, airline_name))
+
+                            # insert seat_class rows for three categories
+                            sql_sc = """
+                                INSERT INTO seat_class (airline_name, airplane_id, seat_class_id, seat_capacity)
+                                VALUES (%s, %s, %s, %s)
+                                ON DUPLICATE KEY UPDATE seat_capacity = VALUES(seat_capacity);
+                            """
+                            cur.executemany(
+                                sql_sc,
+                                [
+                                    (airline_name, airplane_id, 1, cap_eco),
+                                    (airline_name, airplane_id, 2, cap_bus),
+                                    (airline_name, airplane_id, 3, cap_fst),
+                                ],
+                            )
+
+                            conn.commit()
+                            flash(
+                                f"Airplane {airplane_id} added for {airline_name} with seat capacities "
+                                f"(economy: {cap_eco}, business: {cap_bus}, first: {cap_fst})."
+                            )
+                        except Exception as e:
+                            conn.rollback()
+                            flash(f"Failed to add airplane: {e}")
 
             # 3) Associate booking agent
             elif form_type == "agent":
@@ -534,11 +569,15 @@ def admin_home():
                 arrival_time      = request.form.get("arrival_time", "").strip()
                 base_price        = request.form.get("base_price", "").strip()
                 airplane_id_for_flight = request.form.get("airplane_id_for_flight", "").strip()
-                status            = request.form.get("status", "upcoming").strip()
+                status_raw        = request.form.get("status", "upcoming").strip()
+                status            = "in-progress" if status_raw == "on-time" else status_raw
+                allowed_statuses  = {"upcoming", "in-progress", "delayed"}
 
                 if not (flight_num and departure_airport and arrival_airport and
                         departure_time and arrival_time and base_price and airplane_id_for_flight):
                     flash("All flight fields are required.")
+                elif status not in allowed_statuses:
+                    flash("Invalid status value.")
                 else:
                     # datetime-local → replace 'T' with space
                     dep_sql = departure_time.replace("T", " ")
@@ -577,8 +616,18 @@ def admin_home():
             (airline_name,),
         )
     else:
+        # compute total seats from seat_class when no seat column exists
         cur.execute(
-            "SELECT airplane_id, NULL AS seat_capacity FROM airplane WHERE airline_name = %s ORDER BY airplane_id;",
+            """
+            SELECT a.airplane_id, COALESCE(SUM(sc.seat_capacity), 0) AS seat_capacity
+            FROM airplane AS a
+            LEFT JOIN seat_class AS sc
+              ON sc.airline_name = a.airline_name
+             AND sc.airplane_id = a.airplane_id
+            WHERE a.airline_name = %s
+            GROUP BY a.airplane_id
+            ORDER BY a.airplane_id;
+            """,
             (airline_name,),
         )
     airplanes = cur.fetchall()
@@ -635,16 +684,21 @@ def operator_home():
     date_to     = request.args.get("date_to", "").strip()
     origin      = request.args.get("origin", "").strip()
     destination = request.args.get("destination", "").strip()
+    allowed_statuses = {"upcoming", "in-progress", "delayed"}
 
     # ----- POST: update status -----
     if request.method == "POST":
         flight_num = request.form.get("flight_num", "").strip()
-        new_status = request.form.get("status", "").strip()
+        status_raw = request.form.get("status", "").strip()
+        new_status = "in-progress" if status_raw == "on-time" else status_raw
 
         if not flight_num or not new_status:
             flash("Flight number and status are required to update.")
+        elif new_status not in allowed_statuses:
+            flash("Invalid status value.")
         else:
             try:
+                display_status = "on-time" if new_status == "in-progress" else new_status
                 sql_update = """
                     UPDATE flight
                     SET status = %s
@@ -653,7 +707,7 @@ def operator_home():
                 """
                 cur.execute(sql_update, (new_status, airline_name, flight_num))
                 conn.commit()
-                flash(f"Updated status of flight {flight_num} to '{new_status}'.")
+                flash(f"Updated status of flight {flight_num} to '{display_status}'.")
             except Exception as e:
                 conn.rollback()
                 flash(f"Failed to update status: {e}")

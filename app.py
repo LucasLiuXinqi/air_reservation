@@ -18,6 +18,13 @@ app.register_blueprint(staff_bp)
 app.register_blueprint(search_flights_bp)
 app.register_blueprint(flight_status_bp)
 
+
+@app.template_filter("display_status")
+def display_status(value):
+    """Map internal status codes to user-friendly labels."""
+    return "on-time" if value == "in-progress" else value
+
+
 if __name__ == "__main__":
     # Use a non-default port to avoid macOS AirPlay Receiver collision on 5000
     app.run(debug=True, port=5000)
