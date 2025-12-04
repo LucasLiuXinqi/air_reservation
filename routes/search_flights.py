@@ -11,14 +11,25 @@ def search_flights():
     destination = request.args.get("destination", "").strip()
     date = request.args.get("date", "").strip()
     
-    # validation
+    # If redirected here without a date (e.g., after purchase), fall back to last successful search
     if date == "":
-        flash("Please select a date")
-        return redirect(url_for("customer.index"))
-
+        last_date = session.get("last_search_date", "")
+        if last_date:
+            date = last_date
+        else:
+            flash("Please select a date")
+            return redirect(url_for("customer.index"))
+    
+    # validation with fallback to last successful search
     if origin == "" and destination == "":
-        flash("Please enter origin or destination")
-        return redirect(url_for("customer.index"))
+        last_origin = session.get("last_search_origin", "")
+        last_dest = session.get("last_search_destination", "")
+        if last_origin or last_dest:
+            origin = last_origin
+            destination = last_dest
+        else:
+            flash("Please enter origin or destination")
+            return redirect(url_for("customer.index"))
     
     # build query
     conn = get_connection()
@@ -80,6 +91,11 @@ def search_flights():
     
     cur.close()
     conn.close()
+    
+    # remember the last successful search filters
+    session["last_search_date"] = date
+    session["last_search_origin"] = origin
+    session["last_search_destination"] = destination
     
     return render_template(
         "search_flights.html",
