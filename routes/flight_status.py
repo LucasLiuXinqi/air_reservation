@@ -1,5 +1,5 @@
 from db import get_connection
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 
 flight_status_bp = Blueprint("flight_status", __name__, url_prefix="/flight_status")
 
@@ -18,6 +18,23 @@ def flight_status():
     # build query
     conn = get_connection()
     cur = conn.cursor(dictionary=True)
+
+    # Agents can only query airlines they are authorized to sell
+    if session.get("user_role") == "agent":
+        cur.execute(
+            """
+            SELECT 1
+            FROM agent_airline_authorization
+            WHERE agent_email = %s AND airline_name = %s
+            LIMIT 1;
+            """,
+            (session.get("user_email"), airline),
+        )
+        if cur.fetchone() is None:
+            cur.close()
+            conn.close()
+            flash("You are not authorized to view flights for this airline.")
+            return redirect(url_for("customer.index"))
     
     # SQL query
     sql = """
