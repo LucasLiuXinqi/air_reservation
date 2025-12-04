@@ -1,7 +1,3 @@
-Coming Soon# Air Reservation System – Manifest
-
-This manifest lists the main project files and briefly describes their purpose.
-
 ## Top-level
 
 - `app.py`  
