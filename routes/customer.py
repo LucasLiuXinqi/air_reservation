@@ -186,7 +186,24 @@ def purchase():
 
         base_price = row["base_price"]
 
-        # 4) Compute purchase_price based on seat class
+        # 4) Prevent multiple tickets for the same flight (any class) by this customer
+        cur.execute(
+            """
+            SELECT 1
+            FROM ticket AS t
+            JOIN purchases AS p ON t.ticket_id = p.ticket_id
+            WHERE p.customer_email = %s
+              AND t.airline_name   = %s
+              AND t.flight_num     = %s
+            LIMIT 1
+            """,
+            (customer_email, airline_name, flight_num),
+        )
+        if cur.fetchone():
+            flash("You already have a ticket for this flight.")
+            return back_to_search()
+
+        # 5) Compute purchase_price based on seat class
         seat_class_id_int = int(seat_class_id)
         if seat_class_id_int == 1:      # Economy
             factor = Decimal("1.0")
@@ -197,7 +214,7 @@ def purchase():
 
         purchase_price = int(Decimal(str(base_price)) * factor)
 
-        # 5) Insert a ticket with an explicit ticket_id (table has no auto_increment)
+        # 6) Insert a ticket with an explicit ticket_id (table has no auto_increment)
         cur.execute("SELECT COALESCE(MAX(ticket_id), 0) + 1 AS next_id FROM ticket")
         next_ticket_id = cur.fetchone()["next_id"]
         sql_insert_ticket = """

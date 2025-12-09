@@ -175,7 +175,7 @@ def purchase():
             return back_to_search()
         seat_capacity = row["seat_capacity"]
 
-        # 4) prevent duplicate purchase for same customer/flight/class
+        # 4) prevent duplicate purchase for same customer/flight (any class)
         cur.execute(
             """
             SELECT 1
@@ -183,14 +183,13 @@ def purchase():
             JOIN purchases AS p ON t.ticket_id = p.ticket_id
             WHERE t.airline_name  = %s
               AND t.flight_num    = %s
-              AND t.seat_class_id = %s
               AND p.customer_email = %s
             LIMIT 1
             """,
-            (airline_name, flight_num, seat_class_id, customer_email)
+            (airline_name, flight_num, customer_email)
         )
         if cur.fetchone():
-            flash("Purchase failed: customer already has a ticket for this flight and class.", "error")
+            flash("Purchase failed: customer already has a ticket for this flight.", "error")
             return back_to_search()
 
         # 5) check seats sold

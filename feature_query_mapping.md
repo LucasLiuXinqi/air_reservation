@@ -70,6 +70,15 @@ High-level map of user-facing flows to the SQL they execute (table/columns inclu
   -- price and time
   SELECT base_price, departure_time FROM flight WHERE airline_name = ? AND flight_num = ?;
 
+  -- prevent duplicate ticket for same customer/flight (any class)
+  SELECT 1
+  FROM ticket t
+  JOIN purchases p ON t.ticket_id = p.ticket_id
+  WHERE p.customer_email = ?
+    AND t.airline_name   = ?
+    AND t.flight_num     = ?
+  LIMIT 1;
+
   -- next ticket id
   SELECT COALESCE(MAX(ticket_id), 0) + 1 AS next_id FROM ticket;
 
@@ -120,7 +129,7 @@ High-level map of user-facing flows to the SQL they execute (table/columns inclu
   SELECT base_price, departure_time FROM flight WHERE airline_name = ? AND flight_num = ? AND airplane_id = ?;
   SELECT sc.seat_capacity FROM seat_class sc JOIN flight f ... WHERE ...;
   SELECT 1 FROM ticket t JOIN purchases p ON t.ticket_id = p.ticket_id
-   WHERE t.airline_name = ? AND t.flight_num = ? AND t.seat_class_id = ? AND p.customer_email = ? LIMIT 1;
+   WHERE t.airline_name = ? AND t.flight_num = ? AND p.customer_email = ? LIMIT 1;
   SELECT COUNT(*) AS sold FROM ticket t JOIN purchases p ON t.ticket_id = p.ticket_id WHERE ...;
   SELECT COALESCE(MAX(ticket_id), 0) + 1 AS next_id FROM ticket;
   INSERT INTO ticket (...); INSERT INTO purchases (...);
